@@ -1,0 +1,169 @@
+[
+  {
+    "persona": {
+      "age": "15세 이상",
+      "gender": "여성",
+      "main_category": "2. 귀",
+      "middle_category": "이명",
+      "ktas_level": 5
+    },
+    "dialogue": [
+      {
+        "turn": 1,
+        "speaker": "I",
+        "utterance": "Come on in patients 27."
+      },
+      {
+        "turn": 1,
+        "speaker": "CHATGPT",
+        "utterance": "안녕하세요, 18세 여자입니다."
+      },
+      {
+        "turn": 2,
+        "speaker": "I",
+        "utterance": "어디가 불편해서 오셨나요?"
+      },
+      {
+        "turn": 2,
+        "speaker": "CHATGPT",
+        "utterance": "귀에서 이명이 들려서 왔어요."
+      },
+      {
+        "turn": 3,
+        "speaker": "I",
+        "utterance": "이명이 언제부터 시작되었나요?"
+      },
+      {
+        "turn": 3,
+        "speaker": "CHATGPT",
+        "utterance": "어제 밤부터 갑자기 시작됐어요."
+      },
+      {
+        "turn": 4,
+        "speaker": "I",
+        "utterance": "다른 동반 증상은 없으신가요? 예를 들어 어지럼증이나 통증 등."
+      },
+      {
+        "turn": 4,
+        "speaker": "CHATGPT",
+        "utterance": "귀에 통증이나 어지럼증은 없어요."
+      },
+      {
+        "turn": 5,
+        "speaker": "I",
+        "utterance": "이전에도 이런 증상이 있었나요? 과거 병력 있으신가요?"
+      },
+      {
+        "turn": 5,
+        "speaker": "CHATGPT",
+        "utterance": "이전엔 이런 적 없고, 특별한 병력도 없습니다."
+      },
+      {
+        "turn": 6,
+        "speaker": "I",
+        "utterance": "현재 복용 중인 약이나 최근에 사용한 약 있나요?"
+      },
+      {
+        "turn": 6,
+        "speaker": "CHATGPT",
+        "utterance": "복용 중인 약은 없어요."
+      },
+      {
+        "turn": 7,
+        "speaker": "I",
+        "utterance": "귀에서 분비물이나 청력 저하는 없으신가요?"
+      },
+      {
+        "turn": 7,
+        "speaker": "CHATGPT",
+        "utterance": "분비물이나 청력 저하도 없어요."
+      }
+    ],
+    "evaluation": {
+      "ktas": 4,
+      "question": 2,
+      "realism": 9
+    }
+  },
+  {
+    "persona": {
+      "age": "15세 이상",
+      "gender": "남성",
+      "main_category": "3. 입, 목",
+      "middle_category": "코로나",
+      "ktas_level": 1
+    },
+    "dialogue": [
+      {
+        "turn": 1,
+        "speaker": "I",
+        "utterance": "Come on in patients."
+      },
+      {
+        "turn": 1,
+        "speaker": "CHATGPT",
+        "utterance": "저는 17세 남자입니다."
+      },
+      {
+        "turn": 2,
+        "speaker": "I",
+        "utterance": "어디가 불편해서 오셨나요?"
+      },
+      {
+        "turn": 2,
+        "speaker": "CHATGPT",
+        "utterance": "목이 심하게 붓고 숨쉬기가 힘들어요."
+      },
+      {
+        "turn": 3,
+        "speaker": "I",
+        "utterance": "증상은 언제부터 시작되었나요?"
+      },
+      {
+        "turn": 3,
+        "speaker": "CHATGPT",
+        "utterance": "3시간 전부터 갑자기 심해졌어요."
+      },
+      {
+        "turn": 4,
+        "speaker": "I",
+        "utterance": "과거 병력이나 복용 중인 약이 있나요?"
+      },
+      {
+        "turn": 4,
+        "speaker": "CHATGPT",
+        "utterance": "특별한 병력이나 복용 약은 없습니다."
+      },
+      {
+        "turn": 5,
+        "speaker": "I",
+        "utterance": "현재 산소포화도와 활력징후 확인하겠습니다."
+      },
+      {
+        "turn": 5,
+        "speaker": "CHATGPT",
+        "utterance": "산소포화도 88%, 혈압 100/60, 맥박 124회, 호흡수 28회입니다."
+      },
+      {
+        "turn": 6,
+        "speaker": "I",
+        "utterance": "기침이나 가래, 발열 등 동반 증상이 있나요?"
+      },
+      {
+        "turn": 6,
+        "speaker": "CHATGPT",
+        "utterance": "기침과 39도 고열이 있습니다."
+      },
+      {
+        "turn": 7,
+        "speaker": "I",
+        "utterance": "최근 코로나19 검사 결과가 있나요?"
+      },
+      {
+        "turn": 7,
+        "speaker": "CHATGPT",
+        "utterance": "오늘 오전에 코로나 양성 판정 받았습니다."
+      }
+    ]
+  }
+]

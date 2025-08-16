@@ -33,7 +33,7 @@ def generate_conversation(persona):
 {{
   "turn": 1,
   "speaker": "I",
-  "utterance": "Come on in patients."
+  "utterance": "환자 분 들어오세요."
 }}
 ```
 
@@ -46,32 +46,32 @@ def generate_conversation(persona):
 {{
 "turn": 1,
 "speaker": "I",
-"utterance": "Come on in patients 12."
+"utterance": "12번 환자분 들어오세요."
 }},
 {{
 "turn": 1,
 "speaker": "CHATGPT",
-"utterance": "I'm a 55-year-old man."
+"utterance": "저는 55세 남성입니다."
 }},
 {{
 "turn": 2,
 "speaker": "I",
-"utterance": "Where are you uncomfortable?"
+"utterance": "어디가 불편하신가요?"
 }},
 {{
 "turn": 2,
 "speaker": "CHATGPT",
-"utterance": "It's hard to breathe."
+"utterance": "숨쉬기가 힘듭니다."
 }},
 {{
 "turn": 3,
 "speaker": "I",
-"utterance": "Do you have past medical history?"
+"utterance": "과거 병력이 있나요?"
 }},
 {{
 "turn": 3,
 "speaker": "Chatgpt",
-"utterance": "Past history: COPD."
+"utterance": "과거력: COPD."
 }}
 ]
 """
@@ -101,13 +101,14 @@ def load_all_dialogues():
     with open(DATA_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
 
-def update_evaluation(idx, ktas, question, realism):
+def update_evaluation(idx, ktas, question, realism, evaluator):
     data = load_all_dialogues()
     if 0 <= idx < len(data):
         data[idx]["evaluation"] = {
             "ktas": ktas,
             "question": question,
-            "realism": realism
+            "realism": realism,
+            "evaluator": evaluator
         }
         with open(DATA_PATH, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)

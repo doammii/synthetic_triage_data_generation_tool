@@ -48,6 +48,18 @@ def read_csv_any_encoding(uploaded_file):
 
 # --------- Main Tab: 업로드 & 평가 ---------
 def upload_and_evaluate_tab():
+    st.markdown("""
+        <style>
+        /* 체크박스 컨테이너에 최소 높이를 지정하여 정렬을 맞춥니다 */
+        div[data-testid="stCheckbox"] {
+            min-height: 45px; /* 라벨이 두 줄일 때를 고려한 높이, 필요시 조정 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 내용을 세로 중앙에 정렬 */
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
     st.header("[자체 대화 업로드 및 평가]")
 
     st.markdown("CSV를 업로드하면 각 행의 대화를 확인하고 평가할 수 있습니다.")

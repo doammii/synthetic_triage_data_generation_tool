@@ -2,6 +2,18 @@ import streamlit as st
 from utils import load_all_dialogues, update_evaluation
 
 def evaluate_dialogue_tab():
+    st.markdown("""
+        <style>
+        /* 체크박스 컨테이너에 최소 높이를 지정하여 정렬을 맞춥니다 */
+        div[data-testid="stCheckbox"] {
+            min-height: 45px; /* 라벨이 두 줄일 때를 고려한 높이, 필요시 조정 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 내용을 세로 중앙에 정렬 */
+        }
+        </style>
+    """, unsafe_allow_html=True)
+    
     st.header("[생성된 대화 평가]")
 
     data = load_all_dialogues()

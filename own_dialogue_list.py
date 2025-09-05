@@ -145,104 +145,99 @@ def upload_and_evaluate_tab():
             dlg = entry.get("dialogue", {})
             if isinstance(dlg, (dict, list)):
                 pretty = json.dumps(dlg, ensure_ascii=False, indent=2)
-                st.code(pretty, language="json")  
+                st.code(pretty, language="json") 
             else:
                 st.code(str(dlg))
 
         with col2:
             st.markdown("### 평가항목")
             
-            prev = entry.get("evaluation", {}) or {}
-            prev_ktas = prev.get("ktas", "판단 불가")
-            prev_eval = prev.get("evaluator", "")
-            
             with st.form(f"own_eval_form_{idx}"):
                 # KTAS 레벨의 적절성 (기존 유지)
+                st.markdown("**KTAS 레벨의 적절성**")
                 ktas_appropriateness = st.selectbox(
-                    "KTAS 레벨의 적절성",
+                    "",
                     options=["Y", "N", "판단 불가"],
-                    index=["Y", "N", "판단 불가"].index(prev_ktas) if prev_ktas in ["Y", "N", "판단 불가"] else 2,
-                    key=f"own_ktas_{idx}"
+                    index=["Y", "N", "판단 불가"].index(entry.get("evaluation", {}).get("ktas_appropriateness", "판단 불가")),
+                    key=f"own_ktas_{idx}", label_visibility="hidden"
                 )
 
-                # 질문의 적절성 - 3개 컬럼 구성
-                st.markdown("**질문의 적절성**")
+                # 대화의 적절성 평가
+                st.markdown("**대화의 적절성**")
+                appropriateness_questions = [
+                    ("일반인이 이해할 수 있는 쉬운 용어로 대화하는가?", "어려운 용어(대화에 어려운 용어를 사용하여 실제 상황에서 의사소통이 어려울 것 같은 질문과 답변이 있다)\n쉬운 용어 사용(전체적으로 일반인들이 이해하기 쉬운 용어를 사용하여 실제 상황에서 의사소통이 원활할 것 같다)"),
+                    ("질문과 답변이 명확하고 간결한가?", "복잡한 질문과 답변(동시에 2가지 이상의 내용을 질문하고 답하여 대화가 복잡하다)\n명확하고 간결한 질문(전체적으로 질문과 답변이 간결하고 대화의 내용이 명확하다)"),
+                    ("응급실 방문 필요를 확인하는 대화가 포함되어 있는가?", "불필요한 질문(응급실 이용 판단 여부를 결정하는데 반드시 필요한 질문과 답변이 없다)\n필요한 대화(응급실 이용 판단 여부를 결정하는데 반드시 필요한 질문과 답변이 있다)"),
+                    ("대화의 순서는 논리적인가?", "비효율적인 질문 순서(대화의 순서가 논리적이지 않고 산만하다)\n체계적인 질문 흐름(첫 질문부터 결론까지 논리적으로 대화가 진행되었다)"),
+                    ("적절한 공감이나 지지적 표현이 있는가?", "필요한 경우 공감 및 지지적 표현 없음(환자가 불안함을 느끼는 상황에서 공감과 지지적 표현을 하지 않았다)\n필요한 경우 공감 및 지지적 표현 사용(질문자가 사용자의 불안감을 이해하기 쉽게 중간에 적절한 공감을 해주었다)"),
+                ]
                 
-                q_col1, q_col2, q_col3 = st.columns(3)
+                eval_cols_q_header = st.columns([0.6, 0.4])
+                with eval_cols_q_header[0]:
+                    st.markdown("**질문**")
+                with eval_cols_q_header[1]:
+                    st.markdown("**평가**")
+
+                appropriate_ratings = []
+                for i, (q, help_text) in enumerate(appropriateness_questions):
+                    question_key = f"appropriate_q_{idx}_{i}"
+                    current_rating = entry.get("evaluation", {}).get(question_key, "보통이다")
+                    
+                    cols = st.columns([0.6, 0.4])
+                    with cols[0]:
+                        st.markdown(f'<a title="{help_text}" style="text-decoration: none; color: inherit;">{q} ⓘ</a>', unsafe_allow_html=True)
+                    with cols[1]:
+                        radio_val = st.radio(
+                            "",
+                            options=["그렇다", "보통이다", "그렇지 않다"],
+                            index=["그렇다", "보통이다", "그렇지 않다"].index(current_rating),
+                            key=f"{question_key}_radio",
+                            label_visibility="hidden",
+                            horizontal=True
+                        )
+                        appropriate_ratings.append(radio_val)
                 
-                with q_col1:
-                    st.markdown("**부정적인 항목**")
-                    difficult_language = st.checkbox("어려운 용어 사용", key=f"own_difficult_lang_{idx}")
-                    complex_question = st.checkbox("복잡한 질문", key=f"own_complex_q_{idx}")
-                    irrelevant_question = st.checkbox("불필요한 질문", key=f"own_irrelevant_q_{idx}")
-                    essential_omission = st.checkbox("필수 질문의 누락", key=f"own_essential_omit_{idx}")
-                    hasty_judgment = st.checkbox("최종 판단 부적절", key=f"own_hasty_judge_{idx}")
-                    unethical_question = st.checkbox("비효율적인 질문 순서", key=f"own_unethical_q_{idx}")
-                    unclear_question = st.checkbox("의심 또는 추정 진단명 적시", key=f"own_unclear_q_{idx}")
-
-                with q_col2:
-                    st.markdown("**보통이다**")
-                    q_normal_1 = st.checkbox("보통이다", key=f"own_q_normal_1_{idx}")
-                    q_normal_2 = st.checkbox("보통이다", key=f"own_q_normal_2_{idx}")
-                    q_normal_3 = st.checkbox("보통이다", key=f"own_q_normal_3_{idx}")
-                    q_normal_4 = st.checkbox("보통이다", key=f"own_q_normal_4_{idx}")
-                    # 마지막 3개 행에는 보통이다 옵션 없음
-                    st.write("")  # 빈 공간
-                    st.write("")  # 빈 공간
-                    st.write("")  # 빈 공간
-
-                with q_col3:
-                    st.markdown("**긍정적인 항목**")
-                    appropriate_language = st.checkbox("쉬운 용어 사용", key=f"own_easy_lang_{idx}")
-                    public_expression = st.checkbox("공감 및 지지적 표현 사용", key=f"own_public_expr_{idx}")
-                    clear_question = st.checkbox("명확하고 간결한 질문", key=f"own_clear_q_{idx}")
-                    proper_sequence = st.checkbox("적절한 꼬리 질문", key=f"own_proper_seq_{idx}")
-                    systematic_approach = st.checkbox("체계적인 질문 흐름", key=f"own_systematic_{idx}")
-                    situational_consideration = st.checkbox("안전 지향적 최종 판단", key=f"own_situational_{idx}")
-                    structured_action = st.checkbox("구체적인 행동 지침 제공", key=f"own_structured_{idx}")
-
-                # 대화의 현실성 항목 - 3개 컬럼 구성
+                # 대화의 현실성 평가
                 st.markdown("**대화의 현실성**")
+                realism_questions = [
+                    "실제 응급실 상황에 있을 수 있는 상황인가?",
+                    "실제 대화처럼 자연스러운가?",
+                    "환자는 환자답고, 의료진은 의료진다운가?",
+                    "감정적인 표현이 현실적인가?",
+                    "구체적으로 실행 가능한 내용이 제시되는가?"
+                ]
                 
-                r_col1, r_col2, r_col3 = st.columns(3)
-                
-                with r_col1:
-                    st.markdown("**부정적인 항목**")
-                    difficult_language_real = st.checkbox("어려운 용어 사용", key=f"own_difficult_lang_real_{idx}")
-                    complex_question_real = st.checkbox("복잡한 질문", key=f"own_complex_q_real_{idx}")
-                    irrelevant_question_real = st.checkbox("불필요한 질문", key=f"own_irrelevant_q_real_{idx}")
-                    essential_omission_real = st.checkbox("필수 질문의 누락", key=f"own_essential_omit_real_{idx}")
-                    hasty_judgment_real = st.checkbox("최종 판단 부적절", key=f"own_hasty_judge_real_{idx}")
-                    unethical_question_real = st.checkbox("비효율적인 질문 순서", key=f"own_unethical_q_real_{idx}")
-                    unclear_diagnosis_real = st.checkbox("의심 또는 추정 진단명 적시", key=f"own_unclear_diag_real_{idx}")
+                eval_cols_r_header = st.columns([0.6, 0.4])
+                with eval_cols_r_header[0]:
+                    st.markdown("**질문**")
+                with eval_cols_r_header[1]:
+                    st.markdown("**평가**")
 
-                with r_col2:
-                    st.markdown("**보통이다**")
-                    r_normal_1 = st.checkbox("보통이다", key=f"own_r_normal_1_{idx}")
-                    r_normal_2 = st.checkbox("보통이다", key=f"own_r_normal_2_{idx}")
-                    r_normal_3 = st.checkbox("보통이다", key=f"own_r_normal_3_{idx}")
-                    r_normal_4 = st.checkbox("보통이다", key=f"own_r_normal_4_{idx}")
-                    # 마지막 3개 행에는 보통이다 옵션 없음
-                    st.write("")  
-                    st.write("") 
-                    st.write("") 
-
-                with r_col3:
-                    st.markdown("**긍정적인 항목**")
-                    appropriate_language_real = st.checkbox("쉬운 용어 사용", key=f"own_easy_lang_real_{idx}")
-                    public_expression_real = st.checkbox("공감 및 지지적 표현 사용", key=f"own_public_expr_real_{idx}")
-                    clear_question_real = st.checkbox("명확하고 간결한 질문", key=f"own_clear_q_real_{idx}")
-                    proper_education_real = st.checkbox("적절한 꼬리 질문", key=f"own_proper_edu_real_{idx}")
-                    systematic_approach_real = st.checkbox("체계적인 질문 흐름", key=f"own_systematic_real_{idx}")
-                    safety_oriented_real = st.checkbox("안전 지향적 최종 판단", key=f"own_safety_real_{idx}")
-                    structured_action_real = st.checkbox("구체적인 행동 지침 제공", key=f"own_structured_real_{idx}")
-
-                # 평가자
+                realism_ratings = []
+                for i, q in enumerate(realism_questions):
+                    question_key = f"realism_q_{idx}_{i}"
+                    current_rating = entry.get("evaluation", {}).get(question_key, "보통이다")
+                    
+                    cols = st.columns([0.6, 0.4])
+                    with cols[0]:
+                        st.markdown(f'<span style="text-decoration: none; color: inherit;">{q}</span>', unsafe_allow_html=True)
+                    with cols[1]:
+                        radio_val = st.radio(
+                            "",
+                            options=["그렇다", "보통이다", "그렇지 않다"],
+                            index=["그렇다", "보통이다", "그렇지 않다"].index(current_rating),
+                            key=f"{question_key}_radio",
+                            label_visibility="hidden",
+                            horizontal=True
+                        )
+                        realism_ratings.append(radio_val)
+                    
+                # 평가자 이름
                 evaluator = st.text_input(
                     "평가자 이름 또는 ID", 
-                    value=prev_eval, 
-                    placeholder="예: hong_gildong", 
-                    key=f"own_evaluator_{idx}"
+                    value=entry.get("evaluation", {}).get("evaluator", ""),
+                    key=f"own_evaluator_{idx}", 
+                    placeholder="예: hong_gildong"
                 )
 
                 submitted = st.form_submit_button("결과 저장")
@@ -251,49 +246,16 @@ def upload_and_evaluate_tab():
                     if not evaluator.strip():
                         st.error("평가자 이름/ID를 입력해주세요.")
                     else:
-                        # 질문의 적절성 점수 계산 (0-10점 범위)
-                        base_score_question = 5  # 보통이다 기준점
-                        
-                        # 질문의 적절성 - 긍정 항목 점수 계산
-                        positive_items_question = [
-                            appropriate_language, public_expression, clear_question,
-                            proper_sequence, systematic_approach, situational_consideration,
-                            structured_action
-                        ]
-                        positive_score_question = sum(positive_items_question)
-                        
-                        # 질문의 적절성 - 부정 항목 점수 계산
-                        negative_items_question = [
-                            difficult_language, complex_question, irrelevant_question,
-                            essential_omission, hasty_judgment, unethical_question,
-                            unclear_question
-                        ]
-                        negative_score_question = sum(negative_items_question)
-                        
-                        # 최종 질문 적절성 점수 계산 (0-10 범위로 제한)
-                        question_appropriateness_score = max(0, min(10, base_score_question + positive_score_question - negative_score_question))
-                        
-                        # 대화의 현실성 점수 계산 (0-10점 범위)
-                        base_score_realism = 5  # 보통이다 기준점
-                        
-                        # 대화의 현실성 - 긍정 항목 점수 계산
-                        positive_items_realism = [
-                            appropriate_language_real, public_expression_real, clear_question_real,
-                            proper_education_real, systematic_approach_real, safety_oriented_real,
-                            structured_action_real
-                        ]
-                        positive_score_realism = sum(positive_items_realism)
-                        
-                        # 대화의 현실성 - 부정 항목 점수 계산
-                        negative_items_realism = [
-                            difficult_language_real, complex_question_real, irrelevant_question_real,
-                            essential_omission_real, hasty_judgment_real, unethical_question_real,
-                            unclear_diagnosis_real
-                        ]
-                        negative_score_realism = sum(negative_items_realism)
-                        
-                        # 최종 대화의 현실성 점수 계산 (0-10 범위로 제한)
-                        dialogue_realism_score = max(0, min(10, base_score_realism + positive_score_realism - negative_score_realism))
+                        # 점수 계산 함수
+                        def calculate_score(ratings):
+                            base_score = 5
+                            score_change = {"그렇다": 1, "보통이다": 0, "그렇지 않다": -1}
+                            total_score_change = sum(score_change[r] for r in ratings)
+                            final_score = base_score + total_score_change
+                            return max(0, min(10, final_score))
+
+                        question_appropriateness_score = calculate_score(appropriate_ratings)
+                        dialogue_realism_score = calculate_score(realism_ratings)
                         
                         update_own_evaluation(
                             idx, 
@@ -302,8 +264,8 @@ def upload_and_evaluate_tab():
                             dialogue_realism_score, 
                             evaluator
                         )
-                        st.success(f"평가가 저장되었습니다.")
-
+                        st.success(f"평가가 성공적으로 저장되었습니다.")
+        
         st.divider()
 
 # --------- Main Tab: 대화 리스트 확인 ---------
@@ -335,8 +297,8 @@ def own_dialogue_list_tab():
             "대화": conv_str,
             "평가자": evals.get("evaluator", ""),
             "KTAS 레벨의 적절성": evals.get("ktas", ""),
-            "질문의 적절성": evals.get("question", ""),
-            "전체 대화의 현실성": evals.get("realism", ""),
+            "대화의 적절성": evals.get("question", ""),
+            "대화의 현실성": evals.get("realism", ""),
             "삭제": False
         })
 

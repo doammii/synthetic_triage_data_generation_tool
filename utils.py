@@ -40,6 +40,8 @@ def generate_conversation(persona):
 5. One round-term conversation between speakers must share the same "turn". Each "turn" number must increase for each new pair.
 6. All "utterance" must be written in Korean, concise and accurate.
 7. One "turn" must include only one medical information. For example, don't ask for "vital signs" and "past history" at the same time, but separate and answer separately.
+8. The overall flow of the conversation is generally as follows: Broad symptom inquiry → Specific symptom details → Associated symptoms and medical history → Symptom expansion
+Symptom expansion
 
 --- [Example - Output JSON] ---
 [
